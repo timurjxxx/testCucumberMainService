@@ -12,5 +12,5 @@ Feature: Trainer Workload Producer Tests
 
   Scenario: Handling Bad Request
     Given an invalid training or action type
-    When the request is created or sent to the ActiveMQ queue
+    When the update workload request is sent to the ActiveMQ queue
     Then the system should handle the error appropriately

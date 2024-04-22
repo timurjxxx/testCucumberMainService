@@ -10,6 +10,9 @@ import com.gypApp_main.model.Training;
 import com.gypApp_main.model.TrainingType;
 import com.gypApp_main.model.User;
 import io.cucumber.java.en.Given;
+
+import static org.junit.Assert.assertEquals;
+
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.mockito.InjectMocks;
@@ -36,12 +39,13 @@ public class TrainerWorkloadProducerSteps {
     private JmsTemplate jmsTemplate;
 
     private Training training = new Training();
-    private String action ;
+    private String action;
     private String jsonRequest;
     private Trainer trainer = new Trainer();
 
-    private TrainerWorkloadRequest request ;
-    public  TrainerWorkloadProducerSteps() {
+    private TrainerWorkloadRequest request;
+
+    public TrainerWorkloadProducerSteps() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -67,6 +71,7 @@ public class TrainerWorkloadProducerSteps {
 
     @When("the update workload request is sent to the ActiveMQ queue")
     public void whenUpdateWorkloadRequestSentToQueue() throws JsonProcessingException {
+        when(objectMapper.writeValueAsString(any(TrainerWorkloadRequest.class))).thenReturn(jsonRequest);
         producer.updateWorkLoad(training, action);
     }
 
@@ -82,20 +87,26 @@ public class TrainerWorkloadProducerSteps {
 
     @Then("the request should contain the correct details")
     public void thenRequestContainsCorrectDetails() {
+
+        assertEquals(training.getTrainer().getUser().getUserName(), request.getTrainerUsername());
+        assertEquals(training.getTrainingDate(), request.getTrainingDate());
+        assertEquals(trainer.getUser().getFirstName(), request.getTrainerFirstname());
+        assertEquals(trainer.getUser().getLastName(), request.getTrainerLastname());
+
     }
 
-    @When("the request is created or sent to the ActiveMQ queue")
-    public void theRequestIsCreatedOrSentToTheActiveMQQueue() {
-        
-    }
 
     @Given("an invalid training or action type")
     public void anInvalidTrainingOrActionType() {
-        
+        training = null;
+        action = null;
+
     }
 
 
     @Then("the system should handle the error appropriately")
     public void theSystemShouldHandleTheErrorAppropriately() {
+        assertEquals(null, training);
+        assertEquals(null, action);
     }
 }

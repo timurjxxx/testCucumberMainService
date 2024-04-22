@@ -1,34 +1,61 @@
 package steps;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gypApp_main.controller.TrainingController;
+import com.gypApp_main.model.Trainee;
+import com.gypApp_main.model.Trainer;
 import com.gypApp_main.model.Training;
 import com.gypApp_main.model.TrainingSearchCriteria;
+import com.gypApp_main.service.TrainingService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
+
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 public class TrainingControllerSteps {
 
+    @InjectMocks
     private TrainingController trainingController;
 
+    @Mock
+    private TrainingService trainingService;
     private ResponseEntity<Void> response;
     private ResponseEntity<String> trainingResponse;
 
     private Training training;
     private TrainingSearchCriteria criteria;
 
+    private Trainer trainer;
+    private Trainee trainee;
+
+    public  TrainingControllerSteps() {
+        MockitoAnnotations.openMocks(this);
+    }
     @Given("a training request with trainer {string}, trainee {string}, and training type {string}")
     public void givenTrainingRequest(String trainerUsername, String traineeUsername, String trainingTypeName) {
-        // Подготовьте тестовые данные, если это необходимо
+        training.setTrainingName("name");
+        training.setTrainingDate(LocalDate.now());
+        training.setTrainingDuration(90);
+
+
+
     }
 
     @Given("a training with name {string}")
     public void givenTrainingWithName(String trainingName) {
+
         // Подготовьте тестовые данные, если это необходимо
     }
 
@@ -43,18 +70,19 @@ public class TrainingControllerSteps {
     }
 
     @When("the create training request is sent to the API")
-    public void whenCreateTrainingRequestSentToAPI() {
-        response = trainingController.createTraining(/* ваш запрос */);
-    }
+    public void whenCreateTrainingRequestSentToAPI() throws JsonProcessingException {
+        when(trainingService.addTraining(any(Training.class), anyString(), anyString(), anyString())).thenReturn(new Training());
+        response = trainingController.createTraining(training);    }
 
     @When("the delete training request is sent to the API")
-    public void whenDeleteTrainingRequestSentToAPI() {
-        response = trainingController.deleteTraining(/* ваш запрос */);
+    public void whenDeleteTrainingRequestSentToAPI() throws JsonProcessingException {
+         trainingController.deleteTraining(anyString());
+         response = ResponseEntity.ok().build();
     }
 
     @When("the get trainee trainings by criteria request is sent to the API")
     public void whenGetTraineeTrainingsByCriteriaRequestSentToAPI() {
-        response = trainingController.getTraineeTrainingsByCriteria(/* ваш запрос */);
+        response = trainingController.getTraineeTrainingsByCriteria();
     }
 
     @When("the get trainer trainings by criteria request is sent to the API")
@@ -92,7 +120,7 @@ public class TrainingControllerSteps {
 
     @Given("an invalid request or criteria")
     public void anInvalidRequestOrCriteria() {
-        
+
     }
 
     @Then("the API should return an appropriate error response")
