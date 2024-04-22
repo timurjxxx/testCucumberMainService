@@ -9,3 +9,8 @@ Feature: Trainer Workload Producer Tests
     Given a training and an action type
     When the request is created
     Then the request should contain the correct details
+
+  Scenario: Handling Bad Request
+    Given an invalid training or action type
+    When the request is created or sent to the ActiveMQ queue
+    Then the system should handle the error appropriately

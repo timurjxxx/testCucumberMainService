@@ -19,3 +19,8 @@ Feature: Authentication API Tests
     Given a valid change password request
     When the change password request is sent to the API
     Then the API should return a successful response
+
+  Scenario: Invalid Request
+    Given an invalid request
+    When the invalid request is sent to the API
+    Then the API should return a bad request response

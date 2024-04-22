@@ -89,4 +89,13 @@ public class TrainingControllerSteps {
         assertEquals(200, trainingResponse.getStatusCodeValue());
 
     }
+
+    @Given("an invalid request or criteria")
+    public void anInvalidRequestOrCriteria() {
+        
+    }
+
+    @Then("the API should return an appropriate error response")
+    public void theAPIShouldReturnAnAppropriateErrorResponse() {
+    }
 }

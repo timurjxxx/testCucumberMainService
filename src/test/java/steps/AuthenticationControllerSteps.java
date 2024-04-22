@@ -104,4 +104,18 @@ public class AuthenticationControllerSteps {
     public void thenApiShouldReturnSuccessfulResponse() {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
+    @Given("an invalid request")
+    public void anInvalidRequest() {
+        
+    }
+
+    @Then("the API should return a bad request response")
+    public void theAPIShouldReturnABadRequestResponse() {
+        
+    }
+
+    @When("the invalid request is sent to the API")
+    public void theInvalidRequestIsSentToTheAPI() {
+    }
 }

@@ -19,3 +19,8 @@ Feature: Training Controller Tests
     Given a trainer with username "trainerUsername" and search criteria
     When the get trainer trainings by criteria request is sent to the API
     Then the API should return a successful response with the trainer's trainings based on the criteria
+
+  Scenario: Handling Bad Request
+    Given an invalid request or criteria
+    When the request is sent to the API
+    Then the API should return an appropriate error response

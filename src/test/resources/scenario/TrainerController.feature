@@ -19,3 +19,8 @@ Feature: Trainer Controller Tests
     Given a trainer with username "trainerUsername"
     When the activate/deactivate trainer request is sent to the API
     Then the API should return a successful response and activate or deactivate the trainer
+
+  Scenario: Handling Bad Request
+    Given an invalid trainer profile request
+    When the request is sent to the API
+    Then the API should return a bad request response

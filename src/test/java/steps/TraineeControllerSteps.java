@@ -129,8 +129,19 @@ public class TraineeControllerSteps {
         // Проверка активации или деактивации поездника
     }
 
-    @When("the activate\\/deactivate trainee request is sent to the API")
+    @When("the activate/deactivate trainee request is sent to the API")
     public void theActivateDeactivateTraineeRequestIsSentToTheAPI() {
+    }
+
+
+    @Given("an invalid trainee profile request")
+    public void anInvalidTraineeProfileRequest() {
+
+    }
+
+    @When("the request is sent to the API")
+    public void theRequestIsSentToTheAPI() {
+
     }
 
 

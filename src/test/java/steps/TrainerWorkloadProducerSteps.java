@@ -83,4 +83,19 @@ public class TrainerWorkloadProducerSteps {
     @Then("the request should contain the correct details")
     public void thenRequestContainsCorrectDetails() {
     }
+
+    @When("the request is created or sent to the ActiveMQ queue")
+    public void theRequestIsCreatedOrSentToTheActiveMQQueue() {
+        
+    }
+
+    @Given("an invalid training or action type")
+    public void anInvalidTrainingOrActionType() {
+        
+    }
+
+
+    @Then("the system should handle the error appropriately")
+    public void theSystemShouldHandleTheErrorAppropriately() {
+    }
 }

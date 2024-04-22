@@ -25,3 +25,8 @@ Feature: Trainee Controller Tests
     Given a trainee with username "traineeUsername"
     When the activate/deactivate trainee request is sent to the API
     Then the API should return a successful response and activate or deactivate the trainee
+
+  Scenario: Handling Bad Request
+    Given an invalid trainee profile request
+    When the request is sent to the API
+    Then the API should return a bad request response
