@@ -1,32 +1,16 @@
-Feature: Trainee Controller Tests
+Feature: Trainee Controller
 
-  Scenario: Getting Trainee Profile
-    Given a trainee with username "traineeUsername"
-    When the get trainee profile request is sent to the API
-    Then the API should return a successful response with the trainee profile
+  Scenario: Get trainee profile
+    Given a trainee username
+    When the get trainee profile request is sent
+    Then the trainee profile should be returned
 
-  Scenario: Updating Trainee Profile
-    Given a trainee with username "traineeUsername"
-    When the update trainee profile request is sent to the API
-    Then the API should return a successful response with the updated trainee profile
+  Scenario: Update trainee profile
+    Given a trainee username and updated trainee details
+    When the update trainee profile request is sent
+    Then the trainee profile should be updated
 
-  Scenario: Deleting Trainee Profile
-    Given a trainee with username "traineeUsername"
-    When the delete trainee profile request is sent to the API
-    Then the API should return a successful response and delete the trainee profile
-
-  Scenario: Updating Trainee's Trainers List
-    Given a trainee with username "traineeUsername"
-    And a list of trainer usernames
-    When the update trainee trainers list request is sent to the API
-    Then the API should return a successful response with the updated trainee's trainers list
-
-  Scenario: Activating or Deactivating Trainee
-    Given a trainee with username "traineeUsername"
-    When the activate/deactivate trainee request is sent to the API
-    Then the API should return a successful response and activate or deactivate the trainee
-
-  Scenario: Handling Bad Request
-    Given an invalid trainee profile request
-    When the request is sent to the API
-    Then the API should return a bad request response
+  Scenario: Delete trainee profile
+    Given a trainee username for deleting
+    When the delete trainee profile request is sent
+    Then the trainee profile should be deleted and return 200

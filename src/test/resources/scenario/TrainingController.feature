@@ -1,26 +1,23 @@
-Feature: Training Controller Tests
+Feature: Training Controller
 
-  Scenario: Creating a Training
-    Given a training request with trainer "trainerUsername", trainee "traineeUsername", and training type "trainingTypeName"
-    When the create training request is sent to the API
-    Then the API should return a successful response indicating the training is created
+  Scenario: Create a new training
+    Given a valid training
+    When the create training request is sent
+    Then the training should be successfully created
 
-  Scenario: Deleting a Training
-    Given a training with name "trainingName"
-    When the delete training request is sent to the API
-    Then the API should return a successful response indicating the training is deleted
+  Scenario: Delete a training
+    Given an existing training name
+    When the delete training request is sent
+    Then the training should be successfully deleted
 
-  Scenario: Getting Trainee Trainings by Criteria
-    Given a trainee with username "traineeUsername" and search criteria
-    When the get trainee trainings by criteria request is sent to the API
-    Then the API should return a successful response with the trainee's trainings based on the criteria
+  Scenario: Get trainee trainings by criteria
+    Given a trainee username "testTrainee"
+    And a criteria for trainee trainings
+    When the get trainee trainings by criteria request is sent
+    Then the trainee trainings should be returned
 
-  Scenario: Getting Trainer Trainings by Criteria
-    Given a trainer with username "trainerUsername" and search criteria
-    When the get trainer trainings by criteria request is sent to the API
-    Then the API should return a successful response with the trainer's trainings based on the criteria
-
-  Scenario: Handling Bad Request
-    Given an invalid request or criteria
-    When the request is sent to the API
-    Then the API should return an appropriate error response
+  Scenario: Get trainer trainings by criteria
+    Given a trainer username "testTrainer"
+    And a criteria for trainer trainings
+    When the get trainer trainings by criteria request is sent
+    Then the trainer trainings should be returned

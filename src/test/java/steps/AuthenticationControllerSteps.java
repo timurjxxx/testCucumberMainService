@@ -33,6 +33,7 @@ public class AuthenticationControllerSteps {
     private  AuthService service;
 
     private LoginRequest loginRequest = new LoginRequest();
+    private LoginRequest invalidLoginRequest = new LoginRequest();
     private Trainer trainer = new Trainer();
     private Trainee trainee= new Trainee();
     private ChangeLoginRequest changeLoginRequest = new ChangeLoginRequest();
@@ -104,18 +105,23 @@ public class AuthenticationControllerSteps {
     public void thenApiShouldReturnSuccessfulResponse() {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
-
+//////////////////
     @Given("an invalid request")
     public void anInvalidRequest() {
-        
-    }
-
-    @Then("the API should return a bad request response")
-    public void theAPIShouldReturnABadRequestResponse() {
-        
+        invalidLoginRequest.setUsername("testUsername");
+        invalidLoginRequest.setPassword("testPassword");
     }
 
     @When("the invalid request is sent to the API")
     public void theInvalidRequestIsSentToTheAPI() {
+        response = authenticationController.login(invalidLoginRequest);
+
+    }
+
+    @Then("the API should return a bad request response")
+    public void theAPIShouldReturnABadRequestResponse() {
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+
     }
 }

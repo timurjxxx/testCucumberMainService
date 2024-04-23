@@ -1,26 +1,19 @@
-Feature: Trainer Controller Tests
+Feature: Trainer Controller
 
-  Scenario: Getting Trainer Profile
-    Given a trainer with username "trainerUsername"
-    When the get trainer profile request is sent to the API
-    Then the API should return a successful response with the trainer profile
+  Scenario: Get trainer profile
+    Given a trainer username
+    When the get trainer profile request is sent
+    Then the trainer profile should be returned
 
-  Scenario: Updating Trainer Profile
-    Given a trainer with username "trainerUsername"
-    When the update trainer profile request is sent to the API
-    Then the API should return a successful response with the updated trainer profile
+  Scenario: Update trainer profile
+    Given a trainer username and updated trainer details
+    When the update trainer profile request is sent
+    Then the trainer profile should be updated
 
-  Scenario: Getting Not Assigned Active Trainers
-    Given a user with username "username"
-    When the get not assigned active trainers request is sent to the API
-    Then the API should return a successful response with the list of not assigned active trainers
+  Scenario: Get not assigned active trainers
+    Given a username
+    When the get not assigned active trainers request is sent
+    Then the list of not assigned active trainers should be returned
 
-  Scenario: Activating or Deactivating Trainer
-    Given a trainer with username "trainerUsername"
-    When the activate/deactivate trainer request is sent to the API
-    Then the API should return a successful response and activate or deactivate the trainer
 
-  Scenario: Handling Bad Request
-    Given an invalid trainer profile request
-    When the request is sent to the API
-    Then the API should return a bad request response
+

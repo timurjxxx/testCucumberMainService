@@ -1,27 +1,23 @@
 package steps;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gypApp_main.controller.TrainingController;
-import com.gypApp_main.model.Trainee;
-import com.gypApp_main.model.Trainer;
-import com.gypApp_main.model.Training;
-import com.gypApp_main.model.TrainingSearchCriteria;
+import com.gypApp_main.model.*;
 import com.gypApp_main.service.TrainingService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.junit.jupiter.api.Assertions;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 public class TrainingControllerSteps {
@@ -31,99 +27,109 @@ public class TrainingControllerSteps {
 
     @Mock
     private TrainingService trainingService;
-    private ResponseEntity<Void> response;
-    private ResponseEntity<String> trainingResponse;
 
-    private Training training;
-    private TrainingSearchCriteria criteria;
+    private ResponseEntity<Void> createTrainingResponse;
+    private ResponseEntity<?> deleteTrainingResponse;
+    private ResponseEntity<String> traineeTrainingsResponse;
+    private ResponseEntity<String> trainerTrainingsResponse;
 
-    private Trainer trainer;
-    private Trainee trainee;
+    private Training validTraining;
+    private String existingTrainingName;
+    private String traineeUsername;
+    private String trainerUsername;
+    private TrainingSearchCriteria traineeCriteria;
+    private TrainingSearchCriteria trainerCriteria;
 
-    public  TrainingControllerSteps() {
+    public TrainingControllerSteps() {
         MockitoAnnotations.openMocks(this);
     }
-    @Given("a training request with trainer {string}, trainee {string}, and training type {string}")
-    public void givenTrainingRequest(String trainerUsername, String traineeUsername, String trainingTypeName) {
-        training.setTrainingName("name");
-        training.setTrainingDate(LocalDate.now());
-        training.setTrainingDuration(90);
 
-
-
-    }
-
-    @Given("a training with name {string}")
-    public void givenTrainingWithName(String trainingName) {
-
-        // Подготовьте тестовые данные, если это необходимо
-    }
-
-    @Given("a trainee with username {string} and search criteria")
-    public void givenTraineeWithCriteria(String traineeUsername) {
-        // Подготовьте тестовые данные, если это необходимо
-    }
-
-    @Given("a trainer with username {string} and search criteria")
-    public void givenTrainerWithCriteria(String trainerUsername) {
-        // Подготовьте тестовые данные, если это необходимо
-    }
-
-    @When("the create training request is sent to the API")
-    public void whenCreateTrainingRequestSentToAPI() throws JsonProcessingException {
-        when(trainingService.addTraining(any(Training.class), anyString(), anyString(), anyString())).thenReturn(new Training());
-        response = trainingController.createTraining(training);    }
-
-    @When("the delete training request is sent to the API")
-    public void whenDeleteTrainingRequestSentToAPI() throws JsonProcessingException {
-         trainingController.deleteTraining(anyString());
-         response = ResponseEntity.ok().build();
-    }
-
-    @When("the get trainee trainings by criteria request is sent to the API")
-    public void whenGetTraineeTrainingsByCriteriaRequestSentToAPI() {
-        response = trainingController.getTraineeTrainingsByCriteria();
-    }
-
-    @When("the get trainer trainings by criteria request is sent to the API")
-    public void whenGetTrainerTrainingsByCriteriaRequestSentToAPI() {
-        response = trainingController.getTrainerTrainingsByCriteria(/* ваш запрос */);
-    }
-
-    @Then("the API should return a successful response indicating the training is created")
-    public void thenApiShouldReturnSuccessfulResponseIndicatingTrainingCreated() {
-        assertEquals(200, trainingResponse.getStatusCodeValue());
+    @Given("a valid training")
+    public void givenValidTraining() {
+        // Initialize a valid training object
+        validTraining = new Training();
+        Trainer trainer = new Trainer();
+        Trainee trainee = new Trainee();
+        TrainingType trainingType = new TrainingType();
+        User user = new User();
+        user.setUserName("testname");
+        trainer.setUser(user);
+        trainee.setUser(user);
+        validTraining.setTrainer(trainer);
+        validTraining.setTrainee(trainee);
+        validTraining.setTrainingTypes(trainingType);
 
     }
 
-    @Then("the API should return a successful response indicating the training is deleted")
-    public void thenApiShouldReturnSuccessfulResponseIndicatingTrainingDeleted() {
-        assertEquals(200, trainingResponse.getStatusCodeValue());
-
+    @Given("an existing training name")
+    public void givenExistingTrainingName() {
+        existingTrainingName = "existingTrainingName";
     }
 
-    @Then("the API should return a successful response with the trainee's trainings based on the criteria")
-    public void thenApiShouldReturnSuccessfulResponseWithTraineeTrainingsBasedOnCriteria() {
-        // Проверьте успешный ответ от API
-        // Проверьте возвращаемые данные, если это необходимо
-        // Проверьте успешный ответ от API
-        assertEquals(200, trainingResponse.getStatusCodeValue());
-
-
+    @Given("a trainee username {string}")
+    public void givenTraineeUsername(String username) {
+        traineeUsername = username;
     }
 
-    @Then("the API should return a successful response with the trainer's trainings based on the criteria")
-    public void thenApiShouldReturnSuccessfulResponseWithTrainerTrainingsBasedOnCriteria() {
-        assertEquals(200, trainingResponse.getStatusCodeValue());
-
+    @Given("a trainer username {string}")
+    public void givenTrainerUsername(String username) {
+        trainerUsername = username;
     }
 
-    @Given("an invalid request or criteria")
-    public void anInvalidRequestOrCriteria() {
-
+    @Given("a criteria for trainee trainings")
+    public void givenCriteriaForTraineeTrainings() {
+        traineeCriteria = new TrainingSearchCriteria();
     }
 
-    @Then("the API should return an appropriate error response")
-    public void theAPIShouldReturnAnAppropriateErrorResponse() {
+    @Given("a criteria for trainer trainings")
+    public void givenCriteriaForTrainerTrainings() {
+        trainerCriteria = new TrainingSearchCriteria();
+    }
+
+    @When("the create training request is sent")
+    public void whenCreateTrainingRequestSent() throws JsonProcessingException {
+        when(trainingService.addTraining(any(Training.class), any(String.class), any(String.class), any(String.class)))
+                .thenReturn(validTraining);
+        createTrainingResponse = trainingController.createTraining(validTraining);
+    }
+
+    @When("the delete training request is sent")
+    public void whenDeleteTrainingRequestSent() throws JsonProcessingException {
+       doNothing().when(trainingService).deleteTraining(existingTrainingName);
+        deleteTrainingResponse = trainingController.deleteTraining(existingTrainingName);
+    }
+
+    @When("the get trainee trainings by criteria request is sent")
+    public void whenGetTraineeTrainingsByCriteriaRequestSent() {
+        when(trainingService.getTraineeTrainingsByCriteria(traineeUsername, traineeCriteria))
+                .thenReturn(Collections.singletonList(validTraining));
+        traineeTrainingsResponse = trainingController.getTraineeTrainingsByCriteria(traineeUsername, traineeCriteria);
+    }
+
+    @When("the get trainer trainings by criteria request is sent")
+    public void whenGetTrainerTrainingsByCriteriaRequestSent() {
+        when(trainingService.getTrainerTrainingsByCriteria(trainerUsername, trainerCriteria))
+                .thenReturn(Collections.singletonList(validTraining));
+        trainerTrainingsResponse = trainingController.getTrainerTrainingsByCriteria(trainerUsername, trainerCriteria);
+    }
+
+    @Then("the training should be successfully created")
+    public void thenTrainingSuccessfullyCreated() {
+        Assertions.assertEquals(200, createTrainingResponse.getStatusCodeValue());
+    }
+
+    @Then("the training should be successfully deleted")
+    public void thenTrainingSuccessfullyDeleted() {
+        Assertions.assertEquals(200, deleteTrainingResponse.getStatusCodeValue());
+    }
+
+    @Then("the trainee trainings should be returned")
+    public void thenTraineeTrainingsReturned() {
+        Assertions.assertNotNull(traineeTrainingsResponse);
+    }
+
+    @Then("the trainer trainings should be returned")
+    public void thenTrainerTrainingsReturned() {
+        Assertions.assertNotNull(trainerTrainingsResponse);
     }
 }

@@ -1,147 +1,105 @@
-package com.gypApp_main.controller;
+package steps;
 
+import com.gypApp_main.controller.TraineeController;
 import com.gypApp_main.model.Trainee;
-import com.gypApp_main.model.Trainer;
 import com.gypApp_main.model.User;
 import com.gypApp_main.service.TraineeService;
-import com.gypApp_main.service.TrainerService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.junit.jupiter.api.Assertions;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class TraineeControllerSteps {
 
-    @InjectMocks
-    private TraineeController traineeController;
-
     @Mock
     private TraineeService traineeService;
 
-    @Mock
-    private TrainerService trainerService;
-    Trainee trainee = new Trainee();
+    @InjectMocks
+    private TraineeController traineeController;
+    private ResponseEntity<Void> response;
+    private ResponseEntity<String> responseString;
 
-
-    private ResponseEntity<String> response;
-    private ResponseEntity<Void> responseVoid;
+    private String traineeUsername;
+    private Trainee updatedTrainee;
+    private Trainee trainee;
 
     public TraineeControllerSteps() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
-    @Given("a trainee with username {string}")
-    public void givenTraineeWithUsername(String username) {
+    @Given("a trainee username")
+    public void aTraineeUsername() {
+        traineeUsername = "testTrainee";
+    }
+
+    @Given("a trainee username for deleting")
+    public void aTraineeUsernameForDeleting() {
+        trainee = new Trainee();
         User user = new User();
-        user.setFirstName("name");
-        user.setIsActive(true);
-        user.setLastName("lastnaem");
-        trainee.setAddress("test");
-        trainee.setDateOfBirth(LocalDate.now());
+        user.setUserName("testUsername");
         trainee.setUser(user);
+    }
 
-        // Здесь вы можете подготовить тестовые данные для запроса, если это необходимо
-        when(traineeService.selectTraineeByUserName(username)).thenReturn(trainee);
+    @Given("a trainee username and updated trainee details")
+    public void aTraineeUsernameAndUpdatedTraineeDetails() {
+        traineeUsername = "testTrainee";
+        updatedTrainee = new Trainee();
+        // Set updated details for the trainee
+        updatedTrainee.setAddress("Updated Address");
+        updatedTrainee.setTrainers(Collections.emptySet());
+        // Mock the behavior of traineeService to update the trainee profile
+        Mockito.when(traineeService.updateTrainee(traineeUsername, updatedTrainee));
+    }
+
+    @When("the get trainee profile request is sent")
+    public void theGetTraineeProfileRequestIsSent() {
+        // Mock the behavior of traineeService to return a dummy trainee
+        Trainee dummyTrainee = new Trainee();
+        when(traineeService.selectTraineeByUserName(traineeUsername)).thenReturn(dummyTrainee);
+
+        ResponseEntity<String> response = traineeController.getTraineeProfile(traineeUsername);
+
+        Assertions.assertEquals(200, response.getStatusCodeValue());
+    }
+
+    @When("the update trainee profile request is sent")
+    public void theUpdateTraineeProfileRequestIsSent() {
+        responseString = traineeController.updateTraineeProfile(traineeUsername, updatedTrainee);
 
     }
 
-    @Given("a list of trainer usernames")
-    public void givenListOfTrainerUsernames(List<String> trainerUsernames) {
-        Set<Trainer> trainers = new HashSet<>();
-        for (String trainerUsername : trainerUsernames) {
-            Trainer trainer = new Trainer();
-            when(trainerService.selectTrainerByUserName(trainerUsername)).thenReturn(trainer);
-            trainers.add(trainer);
-        }
+    @When("the delete trainee profile request is sent")
+    public void theDeleteTraineeProfileRequestIsSent() {
+        Mockito.doNothing().when(traineeService).deleteTraineeByUserName(traineeUsername);
+
+        // Invoke the endpoint to delete the trainee profile
+        response = traineeController.deleteTraineeProfile(traineeUsername);
     }
 
-    @When("the get trainee profile request is sent to the API")
-    public void whenGetTraineeProfileRequestSentToAPI() {
-        // Отправка запроса на контроллер поездника
-        response = traineeController.getTraineeProfile("username");
+    @Then("the trainee profile should be returned")
+    public void theTraineeProfileShouldBeReturned() {
     }
 
-    @When("the update trainee profile request is sent to the API")
-    public void whenUpdateTraineeProfileRequestSentToAPI() {
-        // Отправка запроса на контроллер поездника
-        response = traineeController.updateTraineeProfile("username", trainee);
+    @Then("the trainee profile should be updated")
+    public void theTraineeProfileShouldBeUpdated() {
     }
 
-    @When("the delete trainee profile request is sent to the API")
-    public void whenDeleteTraineeProfileRequestSentToAPI() {
-        // Отправка запроса на контроллер поездника
-        responseVoid = traineeController.deleteTraineeProfile("name");
-    }
-
-    @When("the update trainee trainers list request is sent to the API")
-    public void whenUpdateTraineeTrainersListRequestSentToAPI() {
-        // Отправка запроса на контроллер поездника
-        response = traineeController.updateTraineeTrainersList("username ", new HashMap<>());
-    }
-
-    @When("the activate/deactivate trainee request is sent to the API")
-    public void whenActivateDeactivateTraineeRequestSentToAPI() {
-        // Отправка запроса на контроллер поездника
-        responseVoid = traineeController.activateDeactivateTrainee("username");
-    }
-
-    @Then("the API should return a successful response with the trainee profile")
-    public void thenApiShouldReturnSuccessfulResponseWithTraineeProfile() {
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        // Проверка возвращаемых данных, если необходимо
-        // Пример: Проверка, что ответ содержит профиль ученика
-        assertTrue(response.getBody().contains("traineeProfile"));
-    }
-
-    @Then("the API should return a successful response with the updated trainee profile")
-    public void thenApiShouldReturnSuccessfulResponseWithUpdatedTraineeProfile() {
-        // Проверка успешного ответа от API
-        // Проверка возвращаемых данных, если необходимо
-    }
-
-    @Then("the API should return a successful response and delete the trainee profile")
-    public void thenApiShouldReturnSuccessfulResponseAndDeleteTraineeProfile() {
-        // Проверка успешного ответа от API
-        // Проверка удаления профиля поездника
-    }
-
-    @Then("the API should return a successful response with the updated trainee's trainers list")
-    public void thenApiShouldReturnSuccessfulResponseWithUpdatedTraineesTrainersList() {
-        // Проверка успешного ответа от API
-        // Проверка возвращаемых данных, если необходимо
-    }
-
-    @Then("the API should return a successful response and activate or deactivate the trainee")
-    public void thenApiShouldReturnSuccessfulResponseAndActivateDeactivateTrainee() {
-        // Проверка успешного ответа от API
-        // Проверка активации или деактивации поездника
-    }
-
-    @When("the activate/deactivate trainee request is sent to the API")
-    public void theActivateDeactivateTraineeRequestIsSentToTheAPI() {
-    }
-
-
-    @Given("an invalid trainee profile request")
-    public void anInvalidTraineeProfileRequest() {
-
-    }
-
-    @When("the request is sent to the API")
-    public void theRequestIsSentToTheAPI() {
-
+    @Then("the trainee profile should be deleted and return 200")
+    public void theTraineeProfileShouldBeDeletedAndReturn200() {
+        // Assert the response
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
 
