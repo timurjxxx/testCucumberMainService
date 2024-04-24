@@ -11,12 +11,14 @@ import org.junit.jupiter.api.Assertions;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -46,7 +48,6 @@ public class TrainingControllerSteps {
 
     @Given("a valid training")
     public void givenValidTraining() {
-        // Initialize a valid training object
         validTraining = new Training();
         Trainer trainer = new Trainer();
         Trainee trainee = new Trainee();
@@ -132,4 +133,6 @@ public class TrainingControllerSteps {
     public void thenTrainerTrainingsReturned() {
         Assertions.assertNotNull(trainerTrainingsResponse);
     }
+    ///////////////
+
 }

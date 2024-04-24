@@ -123,6 +123,21 @@ public class TrainerControllerSteps {
         String responseBody = responseEntity.getBody();
         Assertions.assertNotNull(responseBody);
     }
+//////////////////////////////////////
+    @Given("an invalid username")
+    public void anInvalidUsername() {
+        invalidUsername = "non_existing_username";
+    }
 
+    @When("the get trainer profile request with invalid username is sent")
+    public void theGetTrainerProfileRequestWithInvalidUsernameIsSent() {
+        when(trainerService.selectTrainerByUserName(invalidUsername)).thenThrow(UserNotFoundException.class);
+        responseEntity = controller.getTrainerProfile(invalidUsername);
+    }
 
+    @Then("the API should return a not found response")
+    public void theAPIShouldReturnANotFoundResponse() {
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(404, responseEntity.getStatusCodeValue());
+    }
 }
